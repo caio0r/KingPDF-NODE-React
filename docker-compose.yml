@@ -1,0 +1,33 @@
+services:
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: raikiri-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # Persist uploads and outputs if needed, or just mount for debugging
+      - ./backend/uploads:/app/uploads
+      - ./backend/outputs:/app/outputs
+    environment:
+      - MAX_UPLOAD_SIZE=50MB
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: raikiri-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      # Ensure frontend knows where to talk to backend (browser-side usually needs localhost or public IP)
+      # But server-side rendering might use the container name.
+      # For client-side requests (browser), use 'http://localhost:8000' assuming user runs locally.
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+# Optional: define network driver if needed, default bridge is usually fine

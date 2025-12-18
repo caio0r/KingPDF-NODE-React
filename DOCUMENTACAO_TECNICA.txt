@@ -1,0 +1,85 @@
+# Documentação Técnica - Raikiri PDF Tools
+
+## 1. Visão Geral
+O **Raikiri PDF Tools** é uma aplicação web para manipulação de documentos PDF, oferecendo diversas ferramentas de conversão (PDF para Word, Excel, PPTX, JPG) e compressão. O projeto foca em alta qualidade de conversão, manutenção de layout e experiência de usuário fluida.
+
+## 2. Tecnologias Utilizadas
+
+### Frontend
+- **Framework**: Next.js 14+ (App Router)
+- **Linguagem**: TypeScript / React
+- **Estilização**: Tailwind CSS (com suporte a Dark Mode)
+- **Animações**: Framer Motion
+- **Ícones**: Lucide React
+- **Comunicação HTTP**: Axios
+
+### Backend
+- **Framework**: FastAPI (Python)
+- **Servidor**: Uvicorn
+- **Linguagens**: Python 3.10+
+
+### Bibliotecas de Processamento (Core)
+- **PDF para Word**: `pdf2docx` (conversão estrutural) + `python-docx` (pós-processamento de layout).
+- **PDF para Excel/PPTX**: `pdf2docx` (extração de tabelas) e bibliotecas auxiliares.
+- **Compressão de PDF**: `PyMuPDF` (fitz) - Utiliza estratégia de rasterização segura (renderiza páginas como imagens e recomprime em JPEG) para garantir redução de tamanho sem corromper o arquivo.
+- **Word/Excel/PPTX para PDF**: `libreoffice` (via subprocesso) ou bibliotecas específicas (nesta versão focado em `python-docx` para manipulação).
+
+## 3. Arquitetura e Decisões Técnicas
+
+### 3.1. Frontend: Componentização Genérica
+Para otimizar o código e facilitar a manutenção, foi implementada uma arquitetura baseada em componentes reutilizáveis:
+- **`GenericConverterPage`**: Um componente mestre que gerencia toda a lógica de UI para páginas de conversão simples (Upload -> Conversão -> Download). Ele abstrai o gerenciamento de estado (`file`, `isConverting`, `error`), a chamada à API e a exibição da barra de progresso.
+- **`ConversionProgress`**: Componente visual que simula o progresso da conversão para fornecer feedback imediato ao usuário, evitando a sensação de travamento durante processos longos.
+
+### 3.2. Backend: Estratégias de Conversão
+
+#### PDF para Word (`/convert/pdf-to-word`)
+A conversão direta via `pdf2docx` frequentemente resulta em arquivos com margens incorretas que quebram o layout ou geram páginas em branco.
+**Solução Implementada**:
+1. O arquivo é convertido inicialmente usando `pdf2docx`.
+2. Um script de pós-processamento utilizando `python-docx` abre o arquivo gerado.
+3. As margens são reajustadas agressivamente (Vertical: 0.5cm, Horizontal: 1.5cm) e o espaçamento de parágrafos é zerado para garantir que o conteúdo caiba nas páginas corretamente.
+
+#### Compressão de PDF (`/compress/compress-pdf`)
+A compressão padrão muitas vezes falha em reduzir arquivos complexos ou corrompe imagens.
+**Solução Implementada**: Estratégia "Bug-Proof" (Rasterização).
+1. Cada página do PDF original é renderizada como uma imagem de alta resolução (72 DPI para tela).
+2. A imagem é comprimida como JPEG (Qualidade 70).
+3. Um novo PDF é reconstruído a partir dessas imagens.
+Isso remove vetores complexos e fontes embutidas invisíveis, garantindo redução drástica de tamanho (ex: 3MB -> 300KB) mantendo a legibilidade visual.
+
+## 4. Estrutura de Pastas
+```
+Raikiri/
+├── backend/
+│   ├── api/endpoints/   # Rotas da API (pdf_to_word.py, compress.py, etc.)
+│   ├── core/            # Utilitários globais
+│   └── main.py          # Ponto de entrada da aplicação FastAPI
+├── frontend/
+│   ├── app/convert/     # Páginas de conversão (agora refatoradas)
+│   ├── components/      # Componentes React (GenericConverterPage.tsx)
+│   └── public/          # Assets estáticos
+```
+
+## 5. Como Executar
+
+### Backend
+```bash
+cd backend
+# Ativar ambiente virtual (recomendado)
+source venv/bin/activate  # ou venv\Scripts\activate no Windows
+# Instalar dependências
+pip install -r requirements.txt
+# Rodar servidor
+uvicorn main:app --reload
+```
+
+### Frontend
+```bash
+cd frontend
+# Instalar pacotes
+npm install
+# Rodar servidor de desenvolvimento
+npm run dev
+# Acessar em http://localhost:3000
+```
