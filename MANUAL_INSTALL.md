@@ -40,9 +40,9 @@ cd KingPDF-NODE-React
 
 ---
 
-## 3️⃣ Configurar o BACKEND (Porta 8080)
+## 3️⃣ Configurar o BACKEND (Porta 8999)
 
-O backend foi configurado para rodar na porta **8080** para evitar conflitos.
+O backend foi configurado para rodar na porta **8999** para evitar conflitos!
 
 1.  Entre na pasta:
     ```powershell
@@ -56,8 +56,8 @@ O backend foi configurado para rodar na porta **8080** para evitar conflitos.
 
 3.  Teste se o servidor sobe (sem fechar o terminal):
     ```powershell
-    # Comando para iniciar na porta 8080
-    python -m uvicorn main:app --host 0.0.0.0 --port 8080
+    # Comando para iniciar na porta 8999
+    python -m uvicorn main:app --host 0.0.0.0 --port 8999
     ```
     *Se aparecer "Application startup complete", está funcionando!
     Pressione `Ctrl + C` para parar o teste.*
@@ -107,7 +107,7 @@ O **PM2** é um gerenciador que mantém o site online 24h, mesmo se der erro, e 
     Certifique-se de estar na pasta raiz do projeto (`KingPDF-NODE-React`).
     ```powershell
     cd backend
-    pm2 start "python -m uvicorn main:app --host 0.0.0.0 --port 8080" --name kingpdf-backend
+    pm2 start "python -m uvicorn main:app --host 0.0.0.0 --port 8999" --name kingpdf-backend
     ```
 
 3.  **Iniciar o Frontend**:
@@ -133,7 +133,7 @@ O **PM2** é um gerenciador que mantém o site online 24h, mesmo se der erro, e 
 
 ## ✅ Tudo Pronto!
 
-*   **Backend**: http://localhost:8080/docs (Testar API)
+*   **Backend**: http://localhost:8999/docs (Testar API)
 *   **Acesse o Site**: http://localhost:4040
 
 **Comandos Úteis do PM2:**

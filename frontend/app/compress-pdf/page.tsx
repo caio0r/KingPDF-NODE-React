@@ -24,7 +24,7 @@ export default function CompressPdf() {
         formData.append('file', file);
 
         try {
-            const response = await axios.post('http://localhost:8080/compress/compress-pdf', formData, {
+            const response = await axios.post('http://localhost:8999/compress/compress-pdf', formData, {
                 responseType: 'blob',
             });
 

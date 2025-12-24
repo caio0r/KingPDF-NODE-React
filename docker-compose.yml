@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     container_name: raikiri-backend
     ports:
-      - "8000:8000"
+      - "8999:8000"
     volumes:
       # Persist uploads and outputs if needed, or just mount for debugging
       - ./backend/uploads:/app/uploads
