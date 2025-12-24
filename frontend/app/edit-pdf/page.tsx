@@ -267,7 +267,7 @@ export default function EditPdfPage() {
                 formData.append('image_files', img.file);
             });
 
-            const response = await axios.post('http://localhost:8000/convert/edit-pdf', formData, {
+            const response = await axios.post('http://localhost:8080/convert/edit-pdf', formData, {
                 responseType: 'blob'
             });
 

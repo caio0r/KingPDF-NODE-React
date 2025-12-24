@@ -43,7 +43,7 @@ export default function ProtectPdf() {
         formData.append('password', password);
 
         try {
-            const response = await axios.post('http://localhost:8000/protect/protect-pdf', formData, {
+            const response = await axios.post('http://localhost:8080/protect/protect-pdf', formData, {
                 responseType: 'blob',
             });
 
@@ -145,8 +145,8 @@ export default function ProtectPdf() {
                                                 <p className="text-gray-600 dark:text-gray-400">
                                                     Força da senha:
                                                     <span className={`ml-2 font-semibold ${password.length < 6 ? 'text-red-500' :
-                                                            password.length < 10 ? 'text-yellow-500' :
-                                                                'text-green-500'
+                                                        password.length < 10 ? 'text-yellow-500' :
+                                                            'text-green-500'
                                                         }`}>
                                                         {password.length < 6 ? 'Fraca' :
                                                             password.length < 10 ? 'Média' :

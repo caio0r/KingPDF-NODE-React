@@ -88,7 +88,7 @@ export default function SplitPdf() {
         formData.append('merge', mergePages.toString());
 
         try {
-            const response = await axios.post('http://localhost:8000/split/split-pdf', formData, {
+            const response = await axios.post('http://localhost:8080/split/split-pdf', formData, {
                 responseType: 'blob',
             });
 

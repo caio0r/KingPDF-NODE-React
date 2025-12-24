@@ -126,7 +126,7 @@ export default function MergePdf() {
         });
 
         try {
-            const response = await axios.post('http://localhost:8000/merge/merge-pdf', formData, {
+            const response = await axios.post('http://localhost:8080/merge/merge-pdf', formData, {
                 responseType: 'blob',
             });
 
