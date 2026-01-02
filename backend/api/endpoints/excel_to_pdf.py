@@ -196,7 +196,7 @@ async def excel_to_pdf(background_tasks: BackgroundTasks, file: UploadFile = Fil
         # Build PDF
         if elements:
             pdf.build(elements)
-            print(f"Successfully converted {sheet_count} sheets to PDF")
+
         else:
             # Create empty message
             elements.append(Paragraph("O arquivo Excel não contém dados.", styles['Normal']))

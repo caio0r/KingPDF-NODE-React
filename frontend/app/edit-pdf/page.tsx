@@ -1,24 +1,20 @@
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import axios from 'axios';
+import { getBackendUrl } from '@/utils/apiConfig';
 import {
     ArrowLeft, Save, Type, Image as ImageIcon, ZoomIn, ZoomOut,
     ChevronLeft, ChevronRight, X, Upload, Hand, PenTool, MousePointer2, Eraser
 } from 'lucide-react';
 import Link from 'next/link';
-import { pdfjs, Document, Page } from 'react-pdf';
-import { Rnd } from 'react-rnd';
-import SignatureCanvas from 'react-signature-canvas';
+const Document = dynamic(() => import('react-pdf').then(mod => mod.Document), { ssr: false });
+const Page = dynamic(() => import('react-pdf').then(mod => mod.Page), { ssr: false });
+const Rnd = dynamic(() => import('react-rnd').then(mod => mod.Rnd), { ssr: false });
+const SignatureCanvas: any = dynamic(() => import('react-signature-canvas').then(mod => mod.default), { ssr: false });
 
-// Setup PDF worker
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-    'pdfjs-dist/build/pdf.worker.min.mjs',
-    import.meta.url,
-).toString();
-
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
+// pdfjs worker and CSS are initialized on the client inside the component
 
 interface TextEdit {
     id: string;
@@ -66,7 +62,7 @@ export default function EditPdfPage() {
     const [isSaving, setIsSaving] = useState(false);
 
     // Drawing state
-    const sigCanvasRef = useRef<SignatureCanvas>(null);
+    const sigCanvasRef = useRef<any>(null);
     const [isDrawingOpen, setIsDrawingOpen] = useState(false);
     const [containerSize, setContainerSize] = useState({ width: 0, height: 0 }); // Explicit size for canvas
 
@@ -77,6 +73,27 @@ export default function EditPdfPage() {
     const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
         setNumPages(numPages);
     };
+
+    // Client-only setup for react-pdf worker and styles
+    useEffect(() => {
+        (async () => {
+            try {
+                const { pdfjs } = await import('react-pdf');
+                pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+                    'pdfjs-dist/build/pdf.worker.min.mjs',
+                    import.meta.url,
+                ).toString();
+                // Import CSS for annotation/text layers on client
+                // @ts-ignore - dynamic import of CSS can trigger TS module-not-found during build
+                await import('react-pdf/dist/Page/AnnotationLayer.css');
+                // @ts-ignore - dynamic import of CSS can trigger TS module-not-found during build
+                await import('react-pdf/dist/Page/TextLayer.css');
+            } catch (e) {
+                // If something fails, warn but don't break the page
+                // console.warn('react-pdf client setup failed', e);
+            }
+        })();
+    }, []);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -174,7 +191,7 @@ export default function EditPdfPage() {
     const confirmDrawing = () => {
         if (sigCanvasRef.current && !sigCanvasRef.current.isEmpty()) {
             const canvas = sigCanvasRef.current.getCanvas();
-            canvas.toBlob((blob) => {
+            canvas.toBlob((blob: Blob | null) => {
                 if (blob) {
                     const file = new File([blob], "drawing.png", { type: "image/png" });
                     createImageEdit(file);
@@ -267,7 +284,7 @@ export default function EditPdfPage() {
                 formData.append('image_files', img.file);
             });
 
-            const response = await axios.post('http://localhost:8999/convert/edit-pdf', formData, {
+            const response = await axios.post(`${getBackendUrl()}/convert/edit-pdf`, formData, {
                 responseType: 'blob'
             });
 

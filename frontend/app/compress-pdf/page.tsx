@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import FileUploader from '@/components/FileUploader';
 import axios from 'axios';
+import { getBackendUrl } from '@/utils/apiConfig';
 import { ArrowRight, Download, Loader2, ArrowLeft, CheckCircle, Minimize2 } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -24,7 +25,7 @@ export default function CompressPdf() {
         formData.append('file', file);
 
         try {
-            const response = await axios.post('http://localhost:8999/compress/compress-pdf', formData, {
+            const response = await axios.post(`${getBackendUrl()}/compress/compress-pdf`, formData, {
                 responseType: 'blob',
             });
 

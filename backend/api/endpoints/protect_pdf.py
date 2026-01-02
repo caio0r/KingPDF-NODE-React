@@ -35,7 +35,7 @@ async def protect_pdf(
         with open(input_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-        print(f"Protecting PDF: {file.filename} with password")
+
         
         # Open the PDF with pikepdf
         with pikepdf.open(input_path) as pdf:
@@ -50,14 +50,14 @@ async def protect_pdf(
                 )
             )
         
-        print(f"PDF protected successfully: {output_filename}")
+
         
         # Check if file was created
         if not os.path.exists(output_path):
             raise HTTPException(status_code=500, detail="Protected file could not be created.")
         
         file_size = os.path.getsize(output_path)
-        print(f"Protected PDF size: {file_size} bytes")
+
         
         background_tasks.add_task(cleanup_file, output_path)
 

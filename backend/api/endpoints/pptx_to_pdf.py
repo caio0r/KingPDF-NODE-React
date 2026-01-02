@@ -132,7 +132,7 @@ async def pptx_to_pdf(background_tasks: BackgroundTasks, file: UploadFile = File
         # Build PDF
         if elements:
             pdf.build(elements)
-            print(f"Successfully converted {slide_count} slides to PDF")
+
         else:
             # Create empty message
             from reportlab.platypus import Paragraph

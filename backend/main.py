@@ -7,7 +7,7 @@ app = FastAPI(title="PDF Tools API")
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Allow frontend origin
+    allow_origins=["*"],  # Allow all origins for network access
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

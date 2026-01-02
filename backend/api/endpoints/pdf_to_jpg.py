@@ -30,13 +30,13 @@ def pdf_to_jpg(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
         with open(input_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-        print(f"Converting PDF: {file.filename}")
+
         
         # Open PDF with PyMuPDF
         pdf_document = fitz.open(input_path)
         total_pages = len(pdf_document)
         
-        print(f"PDF has {total_pages} pages")
+
         
         # Create list to store image paths
         image_paths = []
@@ -50,7 +50,7 @@ def pdf_to_jpg(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
                 mat = fitz.Matrix(3, 3)  # 3x zoom for better quality
                 pix = page.get_pixmap(matrix=mat)
                 
-                print(f"Page {page_num + 1} rendered: {pix.width}x{pix.height}")
+
                 
                 # Convert to PIL Image
                 img_data = pix.tobytes("png")
@@ -72,7 +72,7 @@ def pdf_to_jpg(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
                 img.save(jpg_path, 'JPEG', quality=95, optimize=True)
                 image_paths.append(jpg_path)
                 
-                print(f"Saved JPG: {jpg_path}")
+
                 
             except Exception as page_error:
                 print(f"Error converting page {page_num + 1}: {page_error}")
@@ -93,7 +93,7 @@ def pdf_to_jpg(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
                 raise HTTPException(status_code=500, detail="Converted file not found")
             
             file_size = os.path.getsize(output_path)
-            print(f"Returning single JPG: {output_filename} ({file_size} bytes)")
+
             
             background_tasks.add_task(cleanup_file, output_path)
 
@@ -107,7 +107,7 @@ def pdf_to_jpg(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
             zip_filename = f"{base_name}_images.zip"
             zip_path = os.path.join(OUTPUT_DIR, zip_filename)
             
-            print(f"Creating ZIP with {len(image_paths)} images")
+
             
             with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
                 for img_path in image_paths:
@@ -121,7 +121,7 @@ def pdf_to_jpg(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
                     pass
             
             zip_size = os.path.getsize(zip_path)
-            print(f"Returning ZIP: {zip_filename} ({zip_size} bytes)")
+
             
             background_tasks.add_task(cleanup_file, zip_path)
 

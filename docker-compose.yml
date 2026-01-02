@@ -1,11 +1,12 @@
 services:
   backend:
-    build: 
+    build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: raikiri-backend
     ports:
-      - "8999:8000"
+      - "7070:7070"
+    command: uvicorn main:app --host 0.0.0.0 --port 7070
     volumes:
       # Persist uploads and outputs if needed, or just mount for debugging
       - ./backend/uploads:/app/uploads

@@ -156,7 +156,7 @@ async def word_to_pdf(background_tasks: BackgroundTasks, file: UploadFile = File
                         # Clean up temp file
                         cleanup_file(temp_img_path)
                         
-                        print(f"Added image: {img_width}x{img_height}")
+
                     except Exception as e:
                         print(f"Error processing image: {e}")
         except Exception as e:
@@ -165,7 +165,7 @@ async def word_to_pdf(background_tasks: BackgroundTasks, file: UploadFile = File
         # Build PDF
         if total_content > 0 and elements:
             pdf.build(elements)
-            print(f"Successfully converted document with {total_content} content items")
+
         else:
             # Create a simple PDF with a message if document appears empty
             print("No content found in document")

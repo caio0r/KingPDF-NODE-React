@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react';
 import FileUploader from '@/components/FileUploader';
 import axios from 'axios';
+import { getBackendUrl } from '@/utils/apiConfig';
 import { ArrowRight, Download, Loader2, ArrowLeft, CheckCircle, Scissors, Check } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Document, Page, pdfjs } from 'react-pdf';
+import dynamic from 'next/dynamic';
 
-// Configure PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+const Document = dynamic(() => import('react-pdf').then(mod => mod.Document), { ssr: false });
+const Page = dynamic(() => import('react-pdf').then(mod => mod.Page), { ssr: false });
 
 export default function SplitPdf() {
     const [file, setFile] = useState<File | null>(null);
@@ -28,6 +29,19 @@ export default function SplitPdf() {
         // Let's start with none selected to encourage interaction.
         setSelectedPages([]);
     };
+
+    // Client-only pdfjs worker setup
+    useEffect(() => {
+        (async () => {
+            try {
+                const { pdfjs } = await import('react-pdf');
+                // @ts-ignore
+                pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+            } catch (e) {
+                // ignore
+            }
+        })();
+    }, []);
 
     const togglePageSelection = (pageNum: number) => {
         setSelectedPages(prev => {
@@ -88,7 +102,7 @@ export default function SplitPdf() {
         formData.append('merge', mergePages.toString());
 
         try {
-            const response = await axios.post('http://localhost:8999/split/split-pdf', formData, {
+            const response = await axios.post(`${getBackendUrl()}/split/split-pdf`, formData, {
                 responseType: 'blob',
             });
 

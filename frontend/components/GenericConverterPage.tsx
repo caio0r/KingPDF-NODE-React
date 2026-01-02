@@ -6,6 +6,7 @@ import { ArrowRight, Download, Loader2, ArrowLeft, CheckCircle, Upload, LucideIc
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import ConversionProgress from '@/components/ConversionProgress';
+import { getBackendUrl } from '@/utils/apiConfig';
 
 interface GenericConverterPageProps {
     title: string;
@@ -89,11 +90,13 @@ export default function GenericConverterPage({
         setIsConverting(true);
         setError(null);
 
+
+
         const formData = new FormData();
         formData.append('file', file);
 
         try {
-            const response = await axios.post(`http://localhost:8999${endpoint}`, formData, {
+            const response = await axios.post(`${getBackendUrl()}${endpoint}`, formData, {
                 responseType: 'blob',
             });
 

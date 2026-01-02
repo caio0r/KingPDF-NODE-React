@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import FileUploader from '@/components/FileUploader';
 import axios from 'axios';
+import { getBackendUrl } from '@/utils/apiConfig';
 import { ArrowRight, Download, Loader2, ArrowLeft, CheckCircle, Lock, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -43,7 +44,7 @@ export default function ProtectPdf() {
         formData.append('password', password);
 
         try {
-            const response = await axios.post('http://localhost:8999/protect/protect-pdf', formData, {
+            const response = await axios.post(`${getBackendUrl()}/protect/protect-pdf`, formData, {
                 responseType: 'blob',
             });
 

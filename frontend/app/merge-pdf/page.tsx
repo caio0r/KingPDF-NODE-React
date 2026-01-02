@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import axios from 'axios';
+import { getBackendUrl } from '@/utils/apiConfig';
 import { ArrowRight, Download, Loader2, ArrowLeft, CheckCircle, Merge, Plus, X, FileText, GripVertical } from 'lucide-react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -125,8 +126,10 @@ export default function MergePdf() {
             formData.append('files', item.file);
         });
 
+
+
         try {
-            const response = await axios.post('http://localhost:8999/merge/merge-pdf', formData, {
+            const response = await axios.post(`${getBackendUrl()}/merge/merge-pdf`, formData, {
                 responseType: 'blob',
             });
 
